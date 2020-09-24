@@ -1,0 +1,33 @@
+{
+    "preset": "idiomatic",
+    "disallowTabs": true,
+    "requireSpacesInsideParentheses": null,
+    "disallowSpacesInsideParentheses": null,
+    "requireSpacesInsideBrackets": null,
+    "disallowSpacesInsideBrackets": true,
+    "requireSpacesInsideObjectBrackets": null,
+    "requireCamelCaseOrUpperCaseIdentifiers": null,
+    "requireCurlyBraces": null,
+    "maximumLineLength": null,
+    "requireSpaceBeforeBinaryOperators": [
+        "=",
+        "==",
+        "===",
+        "!=",
+        "!==",
+        "&&",
+        "||"
+    ],
+    "requireSpaceAfterBinaryOperators": [
+        "=",
+        "==",
+        "===",
+        "!=",
+        "!==",
+        "&&",
+        "||"
+    ],
+    "validateCommentPosition": null,
+    "requireEarlyReturn": null,
+    "requireDotNotation": null
+}

@@ -1,0 +1,50 @@
+language: node_js
+node_js:
+  - "10"
+  - "12"
+  - "13"
+dist: trusty
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+services:
+  - docker
+stages:
+  - name: test
+    if: type = pull_request OR branch =~ /^(master|beta)$/
+  - name: docker-build
+    if: type = cron OR tag =~ ^v OR (type = push AND branch =~ /^(master|beta)$/)
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq graphicsmagick
+  - npm install -g npm@6
+  - npm --version
+before_script:
+  - "./test/hosts.sh"
+after_script:
+  # The coverage data from as-root tests is root:root but not world-readable
+  - sudo chown -R $(whoami) coverage
+  - npm run test:report-coverage
+script:
+  - npm test
+  - npm run test:install
+  - sudo sh -c 'export PATH=\"'\"$(dirname $(which node)):$PATH\"'\" && npm run test:root'
+jobs:
+  include:
+    - stage: docker-build
+      name: "Docker Build"
+      node_js: '12'
+      script:
+        - if ./util/docker-candidacy.sh; then export DOCKER_CANDIDATE=true; else export DOCKER_CANDIDATE=false; fi
+        - echo 'DOCKER_CANDIDATE='$DOCKER_CANDIDATE
+        - if $DOCKER_CANDIDATE; then ./util/build-docker.sh; fi
+        - if [ $TRAVIS_EVENT_TYPE = cron ]; then travis_terminate 0; fi
+notifications:
+  email: false
+  webhooks:
+    - https://pumabot.strugee.net/hubot/travis-ci-events

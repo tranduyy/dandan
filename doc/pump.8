@@ -1,0 +1,202 @@
+.\" pump.8
+.\"
+.\" pump(8) manual page
+.\"
+.\" Copyright 2016, 2017 AJ Jordan <alex@strugee.net>
+.\"
+.\" Licensed under the Apache License, Version 2.0 (the "License");
+.\" you may not use this file except in compliance with the License.
+.\" You may obtain a copy of the License at
+.\"
+.\"     https://www.apache.org/licenses/LICENSE-2.0
+.\"
+.\" Unless required by applicable law or agreed to in writing, software
+.\" distributed under the License is distributed on an "AS IS" BASIS,
+.\" WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+.\" See the License for the specific language governing permissions and
+.\" limitations under the License.
+.TH PUMP 8 "20 June 2018" "6.0.0-alpha.0"
+.SH NAME
+pump.io \- stream server that does most of what people really want from a
+social network
+.SH SYNOPSIS
+
+.B pump
+[ --config
+.IR config_path
+| -c
+.IR config_path
+]
+[ --\fIconfig_option\fR
+.IR config_value
+]\fI...\fR
+.SH DESCRIPTION
+I post something and my followers see it. That's the rough idea behind
+the pump.
+
+There's an API defined in the
+.B API.md
+file in the source. It uses activitystrea.ms JSON as the main data and
+command format.
+
+You can post almost anything that can be represented with activity
+streams -- short or long text, bookmarks, images, video, audio,
+events, geo checkins. You can follow friends, create lists of people,
+and so on.
+
+The software is useful for at least these scenarios:
+
+* Mobile-first social networking
+
+* Activity stream functionality for an existing app
+
+* Experimenting with social software
+
+It also comes with a web UI.
+.SH OPTIONS
+.TP
+.BR --config ", " -c
+Path to JSON config file. Default is
+.B /etc/pump.io.json
+or
+.B ~/.pump.io.json
+.TP
+.BR --help ", " -h
+Print help text and exit
+.TP
+.BR --version ", " -v
+Print version information and exit
+.PP
+You can also pass configuration values as arguments starting with
+.B --
+- for example,
+\fBpump.io.json\fR's
+.B port
+value can be set by passing
+\fB--port\fR.
+Camelcasing like
+.B urlPort
+should be replaced with
+.B -
+(i.e.
+.B urlPort
+becomes \fB--url-port\fR). Keys whose value is an object can be
+specified using
+.B .
+(period) to separate nested keys. For example, a
+.B pump.io.json
+with the following contents:
+
+.nf
+.RS
+{ "params": { "host": "localhost" } }
+.RE
+.fi
+
+can be set by passing
+\fB--params.host localhost\fR.
+
+.SH EXAMPLES
+Run the server:
+
+.nf
+.RS
+pump
+.RE
+.fi
+
+Run the server with a custom config location in
+`/etc/pump/config.json`:
+
+.nf
+.RS
+pump -c /etc/pump/config.json
+.RE
+.fi
+.SH ENVIRONMENT
+.TP
+.BR NODE_ENV
+The environment pump.io is running in. This should be set to
+.B production
+in production environments or performance will be significantly
+degraded.
+.PP
+.B pump
+also accepts configuration values via environment variables. These are
+too numerous to list here, but the basic idea is to start with
+.B PUMPIO_
+and append the capitalized configuration key you want to set. For
+example, the
+.B port
+key in your
+.B pump.io.json
+would translate to the environment variable \fBPUMPIO_PORT\fR. To
+configure camelcased config values like
+.B urlPort
+replace the camelcasing with
+.B _
+(underscore). For example,
+.B urlPort
+would become
+\fBPUMPIO_URL_PORT\fR. Keys whose value is an object can be
+specified using
+.B __
+to separate subkeys. For example, a
+.B pump.io.json
+with the following contents:
+
+.nf
+.RS
+{ "params": { "host": "localhost" } }
+.RE
+.fi
+
+can be represented by exporting
+.B PUMPIO_PARAMS__HOST
+with a value of \fBlocalhost\fR.
+
+.SH FILES
+.B /etc/pump.io.json
+,
+.B ~/.pump.io.json
+- default configuration files. The latter overrides the former.
+.SH SEE ALSO
+
+.B pump.socket(7)
+.\".B pump.io.json(5)
+.\".B pump-register-app(1)
+.\".B pump-register-user(1)
+.\".B pump-set-password(1)
+.\".B pump-authorize(1)
+.\".B pump-post-file(1)
+.\".B pump-post-note(1)
+.\".B pump-delete(1)
+.\".B pump-follow(1)
+.\".B pump-stop-following(1)
+.\".B pump-show-inbox(1)
+.\".B pump-show-outbox(1)
+.\".B pump-create-group(1)
+.\".B pump-show-group-inbox(1)
+.\".B pump-import-collection(1)
+.\".B pump-import-email(1)
+.SH BUGS
+Bugs are tracked in GitHub:
+.I https://github.com/pump-io/pump.io/issues
+\.
+.SH AUTHOR
+Written primarily by Evan Prodromou; enhanced and maintained by many
+contributors.
+.SH COPYRIGHT
+Copyright \(co 2011-2018, E14N https://e14n.com/ and contributors
+
+Licensed under the Apache License, Version 2.0 (the "License"); you
+may not use this file except in compliance with the License.  You may
+obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied.  See the License for the specific language governing
+permissions and limitations under the License.

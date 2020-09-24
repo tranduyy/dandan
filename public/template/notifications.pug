@@ -1,0 +1,13 @@
+.btn-group#notifications
+  button.btn.dropdown-toggle.btn-small.btn-success(data-toggle="dropdown", href="#")
+    i.fa.fa-exclamation-circle
+    if notifications.items.length > 0
+      | &nbsp;
+      span.badge.badge-important= notifications.items.length
+  ul.dropdown-menu
+    each activity in notifications.items
+      li
+        small!= activity.content
+    if notifications.items.length === 0
+      li
+        small No notifications... yet!

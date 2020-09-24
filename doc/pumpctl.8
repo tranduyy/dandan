@@ -1,0 +1,126 @@
+.\" pumpctl.8
+.\"
+.\" pumpctl(8) manual page
+.\"
+.\" Copyright 2018 AJ Jordan <alex@strugee.net>
+.\"
+.\" Licensed under the Apache License, Version 2.0 (the "License");
+.\" you may not use this file except in compliance with the License.
+.\" You may obtain a copy of the License at
+.\"
+.\"     https://www.apache.org/licenses/LICENSE-2.0
+.\"
+.\" Unless required by applicable law or agreed to in writing, software
+.\" distributed under the License is distributed on an "AS IS" BASIS,
+.\" WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+.\" See the License for the specific language governing permissions and
+.\" limitations under the License.
+.Dd June 20, 2018
+.Dt PUMPCTL 8
+.Os
+.Sh NAME
+.Nm pumpctl
+.Nd admin CLI to interact with a running pump.io daemon
+.Sh SYNOPSIS
+.Nm
+.Op Fl s Pa socket
+.Ar action
+.Sh DESCRIPTION
+The
+.Nm
+utility speaks to the
+.Xr pump.socket 7
+file of a running
+.Xr pump 8
+daemon.
+It supports all features that the underlying protocol supports.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl h
+Print help.
+.It Fl s Pa socket
+Use
+.Pa socket
+as the socket to talk to instead of the default
+.Pa /var/run/pump.socket .
+.It Fl v
+Print version.
+.El
+.Pp
+The available actions are as follows:
+.Bl -tag -width Ds
+.It Cm version
+Query the version of the server's master process.
+.It Cm loglevel Pa level
+Set the log level of the server.
+Can be a Bunyan-compatible log level string (that is, one of
+.Ql fatal ,
+.Ql error ,
+.Ql warning ,
+.Ql info ,
+.Ql debug ,
+or
+.Ql trace ) ,
+or the special string
+.Ql restore
+to restore the log level to the value originally used at startup.
+.It Cm restart
+Trigger a zero-downtime restart.
+.Ed
+.Sh FILES
+.Bl -tag -width /var/run/pump.socket -compact
+.It Pa /var/run/pump.socket
+The default socket file to talk to.
+.Ed
+.Sh EXIT STATUS
+.Ex -std
+.Sh EXAMPLES
+Trigger a zero-downtime restart:
+.Bd -literal -offset Dl
+$ pumpctl restart
+.Ed
+.Pp
+Trigger a zero-downtime restart, but it fails due to the Databank driver:
+.Bd -literal -offset Dl
+$ pumpctl restart
+pumpctl: server indicated unsupported Databank driver
+.Ed
+.Pp
+Query the master process version, specifying a different socket path:
+.Bd -literal -offset Dl
+$ pumpctl -s /tmp/pump.socket version
+6.0.0
+.Ed
+.Pp
+Increase the server log level all the way up to
+.Ql trace :
+.Bd -literal -offset Dl
+$ pumpctl loglevel trace
+.Ed
+.Pp
+Restore the server to its original log level:
+.Bd -literal -offset Dl
+$ pumpctl loglevel restore
+.Ed
+.Pp
+.\" .Sh DIAGNOSTICS
+.\" For sections 1, 4, 6, 7, 8, and 9 printf/stderr messages only.
+.Sh SEE ALSO
+.Xr pump.socket 7 ,
+.Xr pump 8
+.Sh HISTORY
+The
+.Nm
+command first appeared in pump.io 6.0.
+.Sh AUTHORS
+.An AJ Jordan Aq Mt alex@strugee.net
+.Sh CAVEATS
+.Nm
+does not parse any configuration files.
+As such, if the admin has specified a different
+.Cm controlSocket
+in the config, the socket path must be passed on the commandline.
+.Sh BUGS
+Bugs are tracked in GitHub:
+.Lk https://github.com/pump-io/pump.io/issues
